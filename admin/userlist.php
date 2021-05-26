@@ -8,7 +8,7 @@
   }else {
     $pageno = 1;
   }
-  $numRecs = 1;
+  $numRecs = 2;
   $offset = ($pageno - 1) *$numRecs;
 
  if (empty($_POST['search'])) {

@@ -43,7 +43,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Creating Category</h3>
-                <a href="index.php" type="button" class="btn btn-warning float-right">Back</a>
+                <a href="catlist.php" type="button" class="btn btn-warning float-right">Back</a>
               </div>
               <!-- /.card-header -->
               <div class="card-body">

@@ -1,6 +1,37 @@
 <?php
   require 'header.php'; 
+  require 'config/config.php';
+  require 'config/common.php';
   
+  if (!empty($_GET['pageno'])) {
+    $pageno = $_GET['pageno'];
+  }else{
+    $pageno = 1;
+  }
+
+  $numRecs = 1;
+  $offset = ($pageno - 1)/$numRecs;
+
+  if (empty($_POST['search'])) {
+    $stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC");
+    $stmt->execute();
+    $Rawresult =$stmt->fetchAll();
+    $total_pages = ceil(count($Rawresult)/$numRecs);
+
+    $stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC LIMIT $offset,$numRecs");
+    $stmt->execute();
+    $result =$stmt->fetchAll();
+  }else{
+    $searchKey = $_POST['search'];
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
+    $stmt->execute();
+    $Rawresult =$stmt->fetchAll();
+    $total_pages = ceil(count($Rawresult)/$numRecs);
+
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numRecs");
+    $stmt->execute();
+    $result =$stmt->fetchAll();
+  }
 ?>
 
 
@@ -13,6 +44,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Products Table</h3>
+                <a href="product_add.php" class="btn btn-success float-right">Create New Product</a>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -20,65 +52,53 @@
                   <thead>                  
                     <tr>
                       <th style="width: 10px">#</th>
-                      <th>Task</th>
-                      <th>Progress</th>
-                      <th style="width: 40px">Label</th>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Category</th>
+                      <th>In Stock</th>
+                      <th>Price</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1.</td>
-                      <td>Update software</td>
-                      <td>
-                        <div class="progress progress-xs">
-                          <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
-                        </div>
-                      </td>
-                      <td><span class="badge bg-danger">55%</span></td>
-                    </tr>
-                    <tr>
-                      <td>2.</td>
-                      <td>Clean database</td>
-                      <td>
-                        <div class="progress progress-xs">
-                          <div class="progress-bar bg-warning" style="width: 70%"></div>
-                        </div>
-                      </td>
-                      <td><span class="badge bg-warning">70%</span></td>
-                    </tr>
-                    <tr>
-                      <td>3.</td>
-                      <td>Cron job running</td>
-                      <td>
-                        <div class="progress progress-xs progress-striped active">
-                          <div class="progress-bar bg-primary" style="width: 30%"></div>
-                        </div>
-                      </td>
-                      <td><span class="badge bg-primary">30%</span></td>
-                    </tr>
-                    <tr>
-                      <td>4.</td>
-                      <td>Fix and squish bugs</td>
-                      <td>
-                        <div class="progress progress-xs progress-striped active">
-                          <div class="progress-bar bg-success" style="width: 90%"></div>
-                        </div>
-                      </td>
-                      <td><span class="badge bg-success">90%</span></td>
-                    </tr>
+                    <?php 
+                    $i = 1;
+                    foreach ($result as $value) { ?>
+                      <?php
+                      $catstmt = $pdo->prepare("SELECT * FROM catagories WHERE id = ".$value['category_id']);
+                      $catstmt->execute();
+                      $catResult = $catstmt->fetchAll();
+                    ?>
+                      <tr>
+                        <td><?php echo $i++; ?></td>
+                        <td><?php echo escape($value['name']); ?></td>
+                        <td><?php echo escape($value['description']); ?></td>
+                        <td><?php echo escape($catResult[0]['name']); ?></td>
+                        <td><?php echo escape($value['quantity']); ?></td>
+                        <td><?php echo escape($value['price']); ?></td>
+                        <td>
+                          <a href="product_edit.php?id=<?php echo $value['id'] ?>" class="btn btn-warning">Edit</a>
+                          <a href="product_delete.php?id=<?php echo $value['id'] ?>"  onclick="return confirm('Are you sure you want to delete this item')" class="btn btn-danger">Delete</a>
+                        </td>
+                      </tr>
+                    <?php } ?>
                   </tbody>
                 </table>
               </div>
               <!-- /.card-body -->
-              <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-right">
-                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                </ul>
-              </div>
+               <div class="card-footer clearfix">
+             <ul class="pagination pagination-sm m-0 float-right">
+               <li class="page-item"><a class="page-link" href="?pageno=1">First</a></li>
+               <li class="page-item" <?php if($pageno <=1) { echo "disabled"; } ?>>
+                 <a class="page-link" href="<?php if($pageno <= 1) { echo "#"; } else { echo "?pageno=".($pageno-1); } ?>">Previous</a>
+               </li>
+               <li class="page-item"><a class="page-link" href="#"><?php echo $pageno; ?></a></li>
+               <li class="page-item" <?php if($pageno >= $total_pages) { echo "disabled"; } ?>>
+                 <a class="page-link" href="<?php if($pageno >= $total_pages) { echo "#"; } else { echo "?pageno=".($pageno+1); } ?>">Next</a>
+               </li>
+               <li class="page-item"><a class="page-link" href="<?php echo "?pageno=".$total_pages; ?>">Last</a></li>
+             </ul>
+           </div>
             </div>
             <!-- /.card -->
 
