@@ -13,7 +13,20 @@
   $offset = ($pageno - 1)/$numRecs;
 
   if (empty($_POST['search'])) {
-    $stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC");
+
+   if (!empty($_GET['id'])) {
+   	$catId = $_GET['id'];
+   	$stmt = $pdo->prepare("SELECT * FROM products WHERE category_id=$catId ORDER BY id DESC");
+    $stmt->execute();
+    $Rawresult =$stmt->fetchAll();
+    $total_pages = ceil(count($Rawresult)/$numRecs);
+
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE category_id=$catId ORDER BY id DESC LIMIT $offset,$numRecs");
+    $stmt->execute();
+    $result =$stmt->fetchAll();
+
+   }else{
+   	 $stmt = $pdo->prepare("SELECT * FROM products WHERE  ORDER BY id DESC");
     $stmt->execute();
     $Rawresult =$stmt->fetchAll();
     $total_pages = ceil(count($Rawresult)/$numRecs);
@@ -21,7 +34,9 @@
     $stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC LIMIT $offset,$numRecs");
     $stmt->execute();
     $result =$stmt->fetchAll();
-  }else{
+   }
+
+  	}else{
     $searchKey = $_POST['search'];
     $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
     $stmt->execute();
@@ -32,6 +47,8 @@
     $stmt->execute();
     $result =$stmt->fetchAll();
   }
+
+
 ?>
 
 		<div class="container">
@@ -41,12 +58,12 @@
 							<div class="head">Browse Categories</div>
 							<ul class="main-categories">
 								<?php 
-									$catstmt = $pdo->prepare("SELECT * FROM catagories ORDER BY id DESC");
+									$catstmt = $pdo->prepare("SELECT * FROM catagories  ORDER BY id DESC");
 									$catstmt->execute();
 									$catResult = $catstmt->fetchAll();
 								?>
 								<?php foreach ($catResult as  $value) { ?>
-								<li class="main-nav-list"><a  href=""><span><?php  echo $value['name']; ?></span></a>
+								<li class="main-nav-list"><a  href="index.php?id=<?php echo $value['id'] ?>"><span><?php  echo $value['name']; ?></span></a>
 								</li>
 								<?php } ?>
 							</ul>
@@ -89,7 +106,7 @@
 											<span class="ti-bag"></span>
 											<p class="hover-text">add to bag</p>
 										</a>
-										<a href="" class="social-info">
+										<a href="product_detail.php?id=<?php echo $value['id']; ?>" class="social-info">
 											<span class="lnr lnr-move"></span>
 											<p class="hover-text">view more</p>
 										</a>
