@@ -37,7 +37,7 @@
           $address = $_POST['address'];
           $phone = $_POST['phone'];
           if(empty($_POST['role'])):
-            $role = 10;
+            $role = 0;
           else:
             $role = 1;
           endif;

@@ -10,11 +10,12 @@
     $stmt->bindValue(':email', $email);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($user) {
+    if ($user && $user['role'] == 1) {
       if (password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['logged_in'] = time();
         $_SESSION['username'] = $user['name'];
+        $_SESSION['role'] = 1;
 
         header("location:index.php");
       }

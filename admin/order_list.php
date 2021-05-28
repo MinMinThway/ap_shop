@@ -1,8 +1,22 @@
 <?php
+
+   if(!empty($_POST['search']))
+    {
+      setcookie('search',$_POST['search'], time() + (86400 * 30), "/"); 
+    }
+    else
+    {
+      if (empty($_GET['pageno'])) {
+        unset($_COOKIE['search']); 
+        setcookie('search', null, -1, '/'); 
+      }
+    }
 	
 	require 'header.php';
 	require 'config/config.php';
-	
+
+?>
+<?php
 
   if (!empty($_GET['pageno'])) {
     $pageno = $_GET['pageno'];

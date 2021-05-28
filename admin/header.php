@@ -4,6 +4,9 @@
   if (empty( $_SESSION['user_id']) && empty($_SESSION['logged_in'])):
     header("location:login.php");
   endif;
+  if ($_SESSION['role']!= 1) {
+    header("location:login.php");
+  }
 
 ?>
 <!DOCTYPE html>

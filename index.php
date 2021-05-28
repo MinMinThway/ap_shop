@@ -1,4 +1,16 @@
 <?php
+
+ if(!empty($_POST['search']))
+  {
+    setcookie('search',$_POST['search'], time() + (86400 * 30), "/"); 
+  }
+  else
+  {
+    if (empty($_GET['pageno'])) {
+      unset($_COOKIE['search']); 
+      setcookie('search', null, -1, '/'); 
+    }
+  }
   require 'header.php'; 
   require 'config/config.php';
 
@@ -12,7 +24,7 @@
   $numRecs = 1;
   $offset = ($pageno - 1)/$numRecs;
 
-  if (empty($_POST['search'])) {
+   if(empty($_POST['search']) && empty($_COOKIE['search'])) {
 
    if (!empty($_GET['id'])) {
    	$catId = $_GET['id'];
@@ -37,7 +49,7 @@
    }
 
   	}else{
-    $searchKey = $_POST['search'];
+     $searchKey=!empty ($_POST['search']) ? $_POST['search'] :$_COOKIE['search'];
     $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
     $stmt->execute();
     $Rawresult =$stmt->fetchAll();
