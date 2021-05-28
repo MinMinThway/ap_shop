@@ -2,7 +2,7 @@
 	
 	require 'header.php';
 	require 'config/config.php';
-	require 'config/common.php';
+	
 
 	$stmt = $pdo->prepare("SELECT * FROM sale_order_detail ORDER BY id DESC");
 	$stmt->execute();

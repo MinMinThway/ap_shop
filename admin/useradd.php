@@ -1,7 +1,7 @@
 <?php
   require 'header.php';
   require 'config/config.php';
-  require 'config/common.php';
+  
  ?>
  <?php
   if ($_POST) {

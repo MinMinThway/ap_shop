@@ -1,7 +1,7 @@
 <?php
   require 'header.php';
   require 'config/config.php';
-   require 'config/common.php';
+   
   if ($_POST) {
     if (empty($_POST['name']) || empty($_POST['description'])) {
       if (empty($_POST['name'])) {

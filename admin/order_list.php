@@ -2,7 +2,7 @@
 	
 	require 'header.php';
 	require 'config/config.php';
-	require 'config/common.php';
+	
 
   if (!empty($_GET['pageno'])) {
     $pageno = $_GET['pageno'];

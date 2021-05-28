@@ -1,7 +1,7 @@
 <?php
   require 'header.php';
   require 'config/config.php';
-   require 'config/common.php';
+  
   if ($_POST) {
     if (empty($_POST['name']) || empty($_POST['description']) || empty($_POST['category']) || empty($_POST['quantity']) || empty($_POST['price']) || empty($_FILES['image'])) {
       if (empty($_POST['name'])) {

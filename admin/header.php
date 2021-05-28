@@ -1,5 +1,6 @@
 <?php
   session_start();
+   require 'config/common.php';
   if (empty( $_SESSION['user_id']) && empty($_SESSION['logged_in'])):
     header("location:login.php");
   endif;
@@ -40,30 +41,35 @@
       $page = end($link_array);
 
     ?>
-    <form class="form-inline ml-3" method="POST" action="
-    <?php 
-      if($page==='index.php'):
-        echo 'index.php';
-      elseif($page==='catlist.php'):
-        echo 'catlist.php';
-      elseif($page==='userlist.php'):
-        echo 'userlist.php';
-      else:
-        #
-      endif; 
+    <?php if ($page == 'index.php' || $page == 'catlist.php' || $page == 'userlist.php') { ?>
+      <?php if($page != 'order_list.php') { ?>
+         <form class="form-inline ml-3" method="POST" action="
+          <?php 
+            if($page==='index.php'):
+              echo 'index.php';
+            elseif($page==='catlist.php'):
+              echo 'catlist.php';
+            elseif($page==='userlist.php'):
+              echo 'userlist.php';
+            else:
+              #
+            endif; 
 
-    ?>">
-    <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
-      <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" name="search" type="search" placeholder="Search" aria-label="Search">
-        <div class="input-group-append">
-          <button class="btn btn-navbar" type="submit">
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-      </div>
-    </form>
+          ?>">
+          <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
+            <div class="input-group input-group-sm">
+              <input class="form-control form-control-navbar" name="search" type="search" placeholder="Search" aria-label="Search">
+              <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+     </form>
+      <?php } ?>
+   <?php } ?>
 
+     
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- Messages Dropdown Menu -->
